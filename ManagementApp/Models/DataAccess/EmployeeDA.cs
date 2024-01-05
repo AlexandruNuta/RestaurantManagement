@@ -7,10 +7,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.DataAccess
 {
-    public class EmployeeDAL
+    public class EmployeeDAFactory: IEmployeeFactory
+    {
+        public IEmployeeDA Create()
+        {
+            return new EmployeeDAL();
+        }
+    }
+    public interface IEmployeeDA
+    {
+        List<Employee> GetEmployees();
+        Employee GetEmployeeByUsername(string username);
+        Employee GetEmployee(int employeeId);
+        bool CreateEmployee(int id, string name, string position);
+        bool DeleteEmployee(int employeeId);
+        bool UpdateEmployeeName(int employeeId, string newName);
+    }
+    public class EmployeeDAL:IEmployeeDA
     {
         public List<Employee> GetEmployees()
         {
@@ -72,7 +89,7 @@ namespace ManagementApp.Models.DataAccess
                 }
                 else
                 {
-                    return null; // Employee not found
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -131,7 +148,7 @@ namespace ManagementApp.Models.DataAccess
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    return rowsAffected > 0; // Returns true if at least one row was deleted
+                    return rowsAffected > 0;
                 }
                 catch (Exception ex)
                 {
@@ -156,7 +173,7 @@ namespace ManagementApp.Models.DataAccess
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    return rowsAffected > 0; // Returns true if at least one row was updated
+                    return rowsAffected > 0;
                 }
                 catch (Exception ex)
                 {
@@ -186,7 +203,7 @@ namespace ManagementApp.Models.DataAccess
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    return rowsAffected > 0; // Returns true if at least one row was inserted
+                    return rowsAffected > 0;
                 }
                 catch (Exception ex)
                 {

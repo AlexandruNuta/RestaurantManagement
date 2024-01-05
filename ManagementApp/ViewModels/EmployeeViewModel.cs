@@ -1,6 +1,7 @@
 ﻿
 using ManagementApp.Commands;
 using ManagementApp.Models.BusinessLogic;
+using ManagementApp.Models.DataAccess;
 using ManagementApp.Models.Entity;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.ViewModels
 {
@@ -36,7 +38,7 @@ namespace ManagementApp.ViewModels
             }
         }
 
-        public EmployeeBLL _employeeBLL = new EmployeeBLL();
+        public EmployeeBLL _employeeBLL;
 
 
         private int _employeeId;
@@ -72,21 +74,22 @@ namespace ManagementApp.ViewModels
             }
         }
 
-        // Commands
         public ICommand AddEmployeeCommand { get; }
         public ICommand EditEmployeeCommand { get; }
         public ICommand DeleteEmployeeCommand { get; }
 
         public EmployeeViewModel()
         {
-            // Initialize commands
+            IEmployeeFactory employeeDA = new EmployeeDAFactory();
+            _employeeBLL = new EmployeeBLL(employeeDA);
             AddEmployeeCommand = new RelayCommand(AddEmployee);
             EditEmployeeCommand = new RelayCommand(EditEmployee);
             DeleteEmployeeCommand = new RelayCommand(DeleteEmployee);
             LoadEmployees();
+   
         }
 
-        // Command methods
+
         private void AddEmployee()
         {
             
@@ -96,14 +99,13 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Employee created successfully");
                 Employees.Clear();
-                LoadEmployees(); // Refresh the list of employees
+                LoadEmployees();
             }
             else
             {
                 MessageBox.Show("Error occurred while creating the employee");
             }
 
-            // Clear the text boxes after adding
             Name = string.Empty;
             Position = string.Empty;
         }
@@ -116,7 +118,7 @@ namespace ManagementApp.ViewModels
                 return;
             }
 
-            SelectedEmployee.Name = Name; // Update the selected employee's name
+            SelectedEmployee.Name = Name;
 
             bool success = _employeeBLL.UpdateEmployeeName(SelectedEmployee.Id, SelectedEmployee.Name);
 
@@ -124,7 +126,7 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Employee name updated successfully");
                 Employees.Clear();
-                LoadEmployees(); // Refresh the list of employees
+                LoadEmployees();
             }
             else
             {
@@ -146,7 +148,7 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Employee deleted successfully");
                 Employees.Clear();
-                LoadEmployees(); // Refresh the list of employees
+                LoadEmployees();
             }
             else
             {
@@ -155,7 +157,6 @@ namespace ManagementApp.ViewModels
         }
         private void LoadEmployees()
         {
-            // Implement the code to fetch employees from your data access layer
             List<Employee> employees = _employeeBLL.GetEmployees();
 
             foreach (var employee in employees)

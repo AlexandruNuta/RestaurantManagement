@@ -5,14 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.BusinessLogic
 {
     public class OrderBLL
     {
-        private OrderDA _orderDA = new OrderDA();
 
-        // Other methods ...
+        public IOrderDA _orderDA;
+
+        public OrderBLL(IOrderDAFactory orderDA)
+        {
+            _orderDA = orderDA.Create();
+        }
 
         public List<Order> GetAllOrders()
         {
@@ -42,6 +47,5 @@ namespace ManagementApp.Models.BusinessLogic
             return _orderDA.CreateOrder(id, totalAmount, orderDate, status, tableId);
         }
 
-        // Other methods ...
     }
 }

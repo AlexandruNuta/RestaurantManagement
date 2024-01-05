@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using ManagementApp.Models.DataAccess;
 
 namespace ManagementApp.ViewModels
 {
@@ -31,7 +32,7 @@ namespace ManagementApp.ViewModels
             OnPropertyChanged(nameof(SelectedTable));
         }
 
-        public TableBLL _tableBLL = new TableBLL();
+        public TableBLL _tableBLL;
 
         private int _tableId;
         public int TableId
@@ -87,8 +88,6 @@ namespace ManagementApp.ViewModels
                 OnPropertyChanged(nameof(WaiterId));
             }
         }
-
-        // Commands
         public ICommand AddTableCommand { get; }
         public ICommand EditTableCommand { get; }
         public ICommand DeleteTableCommand { get; }
@@ -97,36 +96,58 @@ namespace ManagementApp.ViewModels
 
         public TableViewModel()
         {
-            // Initialize commands
+            TableDAFactory tableDA = new TableDAFactory();
+            _tableBLL = new TableBLL(tableDA);
             AddTableCommand = new RelayCommand(AddTable);
             EditTableCommand = new RelayCommand(EditTable);
             DeleteTableCommand = new RelayCommand(DeleteTable);
             LinkWaiterTableCommand = new RelayCommand(LinkTableCommand);
             LoadTables();
         }
-
-        // Command methods
         private void AddTable()
         {
-            bool success = _tableBLL.CreateTable(_tableId, _number, _availableSeats, _occupiedSeats, _waiterId);
+            bool success = _tableBLL.CreateTable(_tableId, _number, _availableSeats, _occupiedSeats,_waiterId);
 
             if (success)
             {
                 MessageBox.Show("Table created successfully");
                 Tables.Clear();
-                LoadTables(); // Refresh the list of tables
+                LoadTables();
             }
             else
             {
                 MessageBox.Show("Error occurred while creating the table");
             }
 
-            // Clear the text boxes after adding
             TableId = 0;
             Number = 0;
             AvailableSeats = 0;
             OccupiedSeats = 0;
             WaiterId = 0;
+        }
+
+        private bool hasWaiter;
+
+        public bool HasWaiter
+        {
+            get { return hasWaiter; }
+            set
+            {
+                hasWaiter = value;
+                OnPropertyChanged(nameof(HasWaiter));
+            }
+        }
+        
+        private void SeeWaiter()
+        {
+            if (SelectedTable.WaiterId != 0)
+            {
+                HasWaiter = true;
+            }
+            else
+            {
+                HasWaiter = false;
+            }
         }
 
         private void EditTable()
@@ -143,7 +164,7 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Table edited successfully");
                 Tables.Clear();
-                LoadTables(); // Refresh the list of tables
+                LoadTables();
             }
             else
             {
@@ -173,11 +194,12 @@ namespace ManagementApp.ViewModels
                 MessageBox.Show("Error occurred while deleting the table");
             }
         }
+ 
         private void LinkTableCommand()
         {
             if (SelectedTable == null)
             {
-                MessageBox.Show("Please select a table to delete.");
+                MessageBox.Show("Please select a table to link.");
                 return;
             }
 
@@ -197,13 +219,21 @@ namespace ManagementApp.ViewModels
         }
         private void LoadTables()
         {
-            // Implement the code to fetch tables from your data access layer
             List<Table> tables = _tableBLL.GetAllTables();
 
             foreach (var table in tables)
             {
                 Tables.Add(table);
+                if (table.WaiterId != 0)
+                {
+                    HasWaiter = true;
+                }
+                else
+                {
+                    HasWaiter = false;
+                }
             }
         }
+
     }
 }

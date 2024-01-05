@@ -6,18 +6,33 @@
         xmlns:local="clr-namespace:ManagementApp.ViewModels"
         mc:Ignorable="d"
         Title="AdminPage" Height="450" Width="700">
-    
+
     <Window.DataContext>
         <local:AdminViewModel/>
     </Window.DataContext>
 
-    <Grid>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Employees" Command="{Binding NavigateToEmployeesCommand}" Width="100" Margin="10"/>
-            <Button Content="Products" Command="{Binding NavigateToProductsCommand}" Width="100" Margin="10"/>
-            <Button Content="Tables" Command="{Binding NavigateToTablesCommand}" Width="100" Margin="10"/>
-            <Button Content="Order Ticket" Command="{Binding NavigateToOrderCommand}" Width="150" Margin="10"/>
-        </StackPanel>
-    </Grid>
-    
+    <DockPanel>
+        <!-- Header -->
+        <TextBlock DockPanel.Dock="Top" Text="Admin Dashboard" FontSize="24" FontWeight="Bold" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
+
+        <!-- Footer -->
+        <TextBlock DockPanel.Dock="Bottom" Text="© 2024 ManagementApp" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="Employees" Command="{Binding NavigateToEmployeesCommand}" Width="150" Height="150" Margin="10" FontSize="18" Background="LightBlue"/>
+                <Button Content="Products" Command="{Binding NavigateToProductsCommand}" Width="150" Height="150" Margin="10" FontSize="18" Background="LightGreen"/>
+                <Button Content="Tables" Command="{Binding NavigateToTablesCommand}" Width="150" Height="150" Margin="10" FontSize="18" Background="LightYellow"/>
+                <Button Content="Order Ticket" Command="{Binding NavigateToOrderCommand}" Width="150" Height="150" Margin="10" FontSize="18" Background="LightCoral"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

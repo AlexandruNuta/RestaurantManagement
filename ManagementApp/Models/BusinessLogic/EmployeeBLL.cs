@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.BusinessLogic
 {
     public class EmployeeBLL
     {
-        private EmployeeDAL employeeDAL;
-
-        public EmployeeBLL()
+        public IEmployeeDA employeeDAL;
+        public EmployeeBLL(IEmployeeFactory employeeDAL)
         {
-            employeeDAL = new EmployeeDAL();
+            this.employeeDAL = employeeDAL.Create();
         }
 
         public List<Employee> GetEmployees()
@@ -33,19 +33,18 @@ namespace ManagementApp.Models.BusinessLogic
 
         public bool UpdateEmployeeName(int employeeId, string newName)
         {
-            // You can add business logic/validation here if needed
+  
             return employeeDAL.UpdateEmployeeName(employeeId, newName);
         }
 
         public bool CreateEmployee(int id,string name,string position)
         {
-            // You can add business logic/validation here if needed
+ 
             return employeeDAL.CreateEmployee(id,name,position);
         }
 
         public bool DeleteEmployee(int employeeId)
         {
-            // You can add business logic/validation here if needed
             return employeeDAL.DeleteEmployee(employeeId);
         }
     }

@@ -30,28 +30,27 @@ namespace ManagementApp.ViewModels
 
         private void NavigateToEmployees()
         {
-            EmployeeView employeesView = new EmployeeView(); // Create an instance of the EmployeesView
-            employeesView.Show(); // Navigate to the EmployeesView
+            EmployeeView employeesView = new EmployeeView();
+            employeesView.Show();
 
         }
 
         private void NavigateToProducts()
         {
-            ProductView productsView = new ProductView(); // Create an instance of the ProductsView
-            productsView.Show(); // Navigate to the ProductsView
+            ProductView productsView = new ProductView();
+            productsView.Show();
         }
 
         private void NavigateToTables()
         {
-            TableView tablesView = new TableView(); // Create an instance of the TablesView
-            tablesView.Show(); // Navigate to the TablesView
+            TableView tablesView = new TableView();
+            tablesView.Show();
         }
 
         private void NavigateToOrder()
         {
             OrderPage orderPage = new OrderPage();
-            orderPage.Show();// Create an instance of the OrderPage
-            // Navigate to EmployeeTableView or EmployeeTablePage
+            orderPage.Show();
         }
     }
 }

@@ -11,6 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ManagementApp.Models.BusinessLogic;
+using ManagementApp.Models.Entity;
+using ManagementApp.ViewModels;
+
 
 namespace ManagementApp.Views
 {
@@ -23,5 +27,7 @@ namespace ManagementApp.Views
         {
             InitializeComponent();
         }
+
+
     }
 }

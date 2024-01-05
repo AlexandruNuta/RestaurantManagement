@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
+using System.Data.SqlClient;
+using ManagementApp.Models.DataAccess;
 
 namespace ManagementApp.Models.Entity
 {
@@ -50,14 +53,12 @@ namespace ManagementApp.Models.Entity
                 }
             }
         }
-
-        // Other product-specific properties can be added here
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+    
 }
 

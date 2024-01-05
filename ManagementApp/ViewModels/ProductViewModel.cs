@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows;
 
 using ManagementApp.Models.BusinessLogic;
+using ManagementApp.Models.DataAccess;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.ViewModels
 {
@@ -32,7 +34,7 @@ namespace ManagementApp.ViewModels
             OnPropertyChanged(nameof(SelectedProduct));
         }
 
-        public ProductBLL _productBLL = new ProductBLL();
+        public ProductBLL _productBLL;
 
         private int _productId;
         public int ProductId
@@ -67,21 +69,21 @@ namespace ManagementApp.ViewModels
             }
         }
 
-        // Commands
         public ICommand AddProductCommand { get; }
         public ICommand EditProductCommand { get; }
         public ICommand DeleteProductCommand { get; }
 
         public ProductViewModel()
         {
-            // Initialize commands
+           IProductDAFactory productDA = new ProductDAFactory();
+            _productBLL = new ProductBLL(productDA);
             AddProductCommand = new RelayCommand(AddProduct);
             EditProductCommand = new RelayCommand(EditProduct);
             DeleteProductCommand = new RelayCommand(DeleteProduct);
             LoadProducts();
+
         }
 
-        // Command methods
         private void AddProduct()
         {
            
@@ -92,21 +94,16 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Product created successfully");
                 Products.Clear();
-                LoadProducts(); // Refresh the list of products
+                LoadProducts();
             }
             else
             {
                 MessageBox.Show("Error occurred while creating the product");
             }
-
-
-            // Clear the text boxes after adding[
-
             ProductId = 0;
             ProductName = string.Empty;
             Price = 0;
-            // Set default value
-                       // Clear other properties here
+
         }
 
         private void EditProduct()
@@ -117,14 +114,12 @@ namespace ManagementApp.ViewModels
                 return;
             }
 
-           
-
             bool success = _productBLL.UpdateProduct(_productName,_price);
 
             if (success)
             {
                 MessageBox.Show("Product edited successfully");
-                LoadProducts(); // Refresh the list of products
+                LoadProducts(); 
             }
             else
             {
@@ -147,6 +142,7 @@ namespace ManagementApp.ViewModels
                 MessageBox.Show("Product deleted successfully");
                 Products.Clear();
                 Products.Remove(SelectedProduct);
+                LoadProducts();
             }
             else
             {
@@ -156,7 +152,6 @@ namespace ManagementApp.ViewModels
 
         private void LoadProducts()
         {
-            // Implement the code to fetch products from your data access layer
             List<Product> products = _productBLL.GetAllProducts();
 
             foreach (var product in products)

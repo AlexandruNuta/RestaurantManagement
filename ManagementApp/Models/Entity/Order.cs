@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System;
 using System.ComponentModel;
 
 namespace ManagementApp.Models.Entity
@@ -30,11 +29,12 @@ namespace ManagementApp.Models.Entity
             get { return totalAmount; }
             set
             {
-                if (totalAmount != value)
+                if (value < 0)
                 {
-                    totalAmount = value;
-                    OnPropertyChanged("TotalAmount");
+                    throw new ArgumentOutOfRangeException(nameof(value), "TotalAmount cannot be negative.");
                 }
+
+                totalAmount = value;
             }
         }
 

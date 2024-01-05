@@ -10,37 +10,46 @@
         <local:EmployeeViewModel />
     </Window.DataContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <!-- Header -->
+        <TextBlock DockPanel.Dock="Top" Text="Employee Management" FontSize="24" FontWeight="Bold" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-        <ListBox ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <!-- Footer -->
+        <TextBlock DockPanel.Dock="Bottom" Text="© 2024 ManagementApp" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
+            <!-- Employee List -->
+            <ListBox Grid.Row="0" ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" FontSize="16"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Add" Command="{Binding AddEmployeeCommand}" Margin="10"/>
-            <Button Content="Edit" Command="{Binding EditEmployeeCommand}" Margin="10"/>
-            <Button Content="Delete" Command="{Binding DeleteEmployeeCommand}" Margin="10"/>
-        </StackPanel>
+            <!-- Buttons -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Add" Command="{Binding AddEmployeeCommand}" Margin="10" Background="LightBlue" Width="100" Height="50" FontSize="16"/>
+                <Button Content="Edit" Command="{Binding EditEmployeeCommand}" Margin="10" Background="LightGreen" Width="100" Height="50" FontSize="16"/>
+                <Button Content="Delete" Command="{Binding DeleteEmployeeCommand}" Margin="10" Background="LightCoral" Width="100" Height="50" FontSize="16"/>
+            </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
-            <TextBlock Text="Employee ID:" />
-            <TextBox Text="{Binding EmployeeId, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <!-- Employee Details -->
+            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
+                <TextBlock Text="Employee ID:" FontSize="16"/>
+                <TextBox Text="{Binding EmployeeId, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
 
-            <TextBlock Text="Name:" />
-            <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="0,5,0,10"/>
+                <TextBlock Text="Name:" FontSize="16"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
 
-            <TextBlock Text="Position:" />
-            <TextBox Text="{Binding Position, Mode=TwoWay}" Margin="0,5,0,10"/>
-        </StackPanel>
-    </Grid>
+                <TextBlock Text="Position:" FontSize="16"/>
+                <TextBox Text="{Binding Position, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

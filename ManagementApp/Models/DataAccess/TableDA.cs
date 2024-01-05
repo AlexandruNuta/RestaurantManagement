@@ -7,187 +7,177 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ManagementApp.Models.Entity;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.DataAccess
 {
-    public class TableDA
+    public class TableDAFactory : ITableDAFactory
     {
-        public List<Table> GetAllTables()
+        public ITableDA Create()
         {
-            List<Table> tables = new List<Table>();
-
-            SqlConnection sqlConnection = DatabaseManager.Connection;
-            SqlDataReader reader = null;
-
-            try
-            {
-                sqlConnection.Open();
-                SqlCommand cmd = new SqlCommand("[dbo].[GetAllTables]", sqlConnection);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Table table = new Table
-                    {
-                        Id = Convert.ToInt32(reader["TableId"]),
-                        Number = Convert.ToInt32(reader["Number"]),
-                        AvailableSeats = Convert.ToInt32(reader["AvailableSeats"]),
-                        OccupiedSeats = Convert.ToInt32(reader["OccupiedSeats"]),
-                        WaiterId = Convert.ToInt32(reader["WaiterId"])
-                    };
-
-                    tables.Add(table);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Database error: " + ex.Message);
-            }
-            finally
-            {
-                reader?.Close();
-                sqlConnection.Close();
-            }
-
-            return tables;
+            return new TableDA();
         }
-
-        public Table GetTable(int number)
+        public interface ITableDA
         {
-            Table table = null;
-
-            SqlConnection sqlConnection = DatabaseManager.Connection;
-            SqlDataReader reader = null;
-
-            try
-            {
-                sqlConnection.Open();
-                SqlCommand cmd = new SqlCommand("[dbo].[GetTableByNumber]", sqlConnection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
-
-                reader = cmd.ExecuteReader();
-                 
-                if (reader.Read())
-                {
-                    table = new Table
-                    {
-                        Id = Convert.ToInt32(reader["TableId"]),
-                        Number = Convert.ToInt32(reader["TableNumber"]),
-                        AvailableSeats = Convert.ToInt32(reader["AvailableSeats"]),
-                        OccupiedSeats = Convert.ToInt32(reader["OccupiedSeats"]),
-                        WaiterId = Convert.ToInt32(reader["WaiterId"])
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Database error: " + ex.Message);
-            }
-            finally
-            {
-                reader?.Close();
-                sqlConnection.Close();
-            }
-
-            return table;
+            List<Table> GetAllTables();
+            Table GetTable(int number);
+            bool DeleteTable(int tableId);
+            bool CreateTable(int id, int number, int availableSeats, int occupiedSeats, int waiterId);
+            bool UpdateTable(int id, int number, int availableSeats, int occupiedSeats, int waiterId);
+            bool UpdateTableById(int id, int waiterId);
         }
-        public bool DeleteTable(int tableId)
+        public class TableDA : ITableDA
         {
-            SqlConnection sqlConnection = DatabaseManager.Connection;
+            public List<Table> GetAllTables()
+            {
+                List<Table> tables = new List<Table>();
 
-            try
-            {
-                sqlConnection.Open();
-                SqlCommand cmd = new SqlCommand("[dbo].[DeleteRestTable]", sqlConnection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@TableId", SqlDbType.Int).Value = tableId;
+                SqlConnection sqlConnection = DatabaseManager.Connection;
+                SqlDataReader reader = null;
 
-                int rowsAffected = cmd.ExecuteNonQuery();
-
-                return rowsAffected > 0; // Returns true if at least one row was deleted
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Database error: " + ex.Message);
-                return false;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
-        }
-        public bool CreateTable(int id,int number,int availableSeats,int occupiedSeats,int waiterId)
-        {
-            SqlConnection sqlConnection = DatabaseManager.Connection;
-
-            try
-            {
-                sqlConnection.Open();
-                SqlCommand cmd = new SqlCommand("[dbo].[CreateRestTable]", sqlConnection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
-                cmd.Parameters.Add("@AvailableSeats", SqlDbType.Int).Value = availableSeats;
-                cmd.Parameters.Add("@OccupiedSeats", SqlDbType.Int).Value = occupiedSeats;
-                cmd.Parameters.Add("@WaiterId", SqlDbType.Int).Value = waiterId;
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-
-                return rowsAffected > 0; // Returns true if at least one row was inserted
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Database error: " + ex.Message);
-                return false;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
-        }
-
-        public bool UpdateTable(int tableId, int number, int availableSeats, int occupiedSeats, int waiterId)
-        {
-            SqlConnection sqlConnection = DatabaseManager.Connection;
-
-            try
-            {
-                sqlConnection.Open();
-                SqlCommand cmd = new SqlCommand("[dbo].[UpdateTable]", sqlConnection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@TableId", SqlDbType.Int).Value = tableId;
-                cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
-                cmd.Parameters.Add("@AvailableSeats", SqlDbType.Int).Value = availableSeats;
-                cmd.Parameters.Add("@OccupiedSeats", SqlDbType.Int).Value = occupiedSeats;
-                cmd.Parameters.Add("@WaiterId", SqlDbType.Int).Value = waiterId;
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Database error: " + ex.Message);
-                return false;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
-        }
-        public bool UpdateTableById(int tableId,int waiterId)
-        {
-            using (SqlConnection connection = DatabaseManager.Connection)
-            {
                 try
                 {
-                    connection.Open();
-                    SqlCommand cmd = new SqlCommand("[dbo].[UpdateTableWaiterById]", connection);
+                    sqlConnection.Open();
+                    SqlCommand cmd = new SqlCommand("[dbo].[GetAllTables]", sqlConnection);
                     cmd.CommandType = CommandType.StoredProcedure;
-                   
+
+                    reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Table table = new Table
+                        {
+                            Id = Convert.ToInt32(reader["TableId"]),
+                            Number = Convert.ToInt32(reader["Number"]),
+                            AvailableSeats = Convert.ToInt32(reader["AvailableSeats"]),
+                            OccupiedSeats = Convert.ToInt32(reader["OccupiedSeats"]),
+                            WaiterId = Convert.ToInt32(reader["WaiterId"])
+                        };
+
+                        tables.Add(table);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Database error: " + ex.Message);
+                }
+                finally
+                {
+                    reader?.Close();
+                    sqlConnection.Close();
+                }
+
+                return tables;
+            }
+
+            public Table GetTable(int number)
+            {
+                Table table = null;
+
+                SqlConnection sqlConnection = DatabaseManager.Connection;
+                SqlDataReader reader = null;
+
+                try
+                {
+                    sqlConnection.Open();
+                    SqlCommand cmd = new SqlCommand("[dbo].[GetTableByNumber]", sqlConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
+
+                    reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        table = new Table
+                        {
+                            Id = Convert.ToInt32(reader["TableId"]),
+                            Number = Convert.ToInt32(reader["TableNumber"]),
+                            AvailableSeats = Convert.ToInt32(reader["AvailableSeats"]),
+                            OccupiedSeats = Convert.ToInt32(reader["OccupiedSeats"]),
+                            WaiterId = Convert.ToInt32(reader["WaiterId"])
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Database error: " + ex.Message);
+                }
+                finally
+                {
+                    reader?.Close();
+                    sqlConnection.Close();
+                }
+
+                return table;
+            }
+            public bool DeleteTable(int tableId)
+            {
+                SqlConnection sqlConnection = DatabaseManager.Connection;
+
+                try
+                {
+                    sqlConnection.Open();
+                    SqlCommand cmd = new SqlCommand("[dbo].[DeleteRestTable]", sqlConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@TableId", SqlDbType.Int).Value = tableId;
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Database error: " + ex.Message);
+                    return false;
+                }
+                finally
+                {
+                    sqlConnection.Close();
+                }
+            }
+            public bool CreateTable(int id, int number, int availableSeats, int occupiedSeats, int waiterId)
+            {
+                SqlConnection sqlConnection = DatabaseManager.Connection;
+
+                try
+                {
+                    sqlConnection.Open();
+                    SqlCommand cmd = new SqlCommand("[dbo].[CreateRestTable]", sqlConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                    cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
+                    cmd.Parameters.Add("@AvailableSeats", SqlDbType.Int).Value = availableSeats;
+                    cmd.Parameters.Add("@OccupiedSeats", SqlDbType.Int).Value = occupiedSeats;
+                    cmd.Parameters.Add("@WaiterId", SqlDbType.Int).Value = waiterId;
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Database error: " + ex.Message);
+                    return false;
+                }
+                finally
+                {
+                    sqlConnection.Close();
+                }
+            }
+
+            public bool UpdateTable(int tableId, int number, int availableSeats, int occupiedSeats, int waiterId)
+            {
+                SqlConnection sqlConnection = DatabaseManager.Connection;
+
+                try
+                {
+                    sqlConnection.Open();
+                    SqlCommand cmd = new SqlCommand("[dbo].[UpdateTable]", sqlConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@TableId", SqlDbType.Int).Value = tableId;
+                    cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
+                    cmd.Parameters.Add("@AvailableSeats", SqlDbType.Int).Value = availableSeats;
+                    cmd.Parameters.Add("@OccupiedSeats", SqlDbType.Int).Value = occupiedSeats;
                     cmd.Parameters.Add("@WaiterId", SqlDbType.Int).Value = waiterId;
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -198,8 +188,35 @@ namespace ManagementApp.Models.DataAccess
                     MessageBox.Show("Database error: " + ex.Message);
                     return false;
                 }
+                finally
+                {
+                    sqlConnection.Close();
+                }
             }
-        }
+            public bool UpdateTableById(int tableId, int waiterId)
+            {
+                using (SqlConnection connection = DatabaseManager.Connection)
+                {
+                    try
+                    {
+                        connection.Open();
+                        SqlCommand cmd = new SqlCommand("[dbo].[UpdateTableWaiterById]", connection);
+                        cmd.CommandType = CommandType.StoredProcedure;
 
+                        cmd.Parameters.Add("@TableId", SqlDbType.Int).Value = tableId;
+                        cmd.Parameters.Add("@WaiterId", SqlDbType.Int).Value = waiterId;
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Database error: " + ex.Message);
+                        return false;
+                    }
+                }
+            }
+
+        }
     }
 }

@@ -5,67 +5,74 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ManagementApp.ViewModels"
         mc:Ignorable="d"
-        Title="OrderPage" Height="700" Width="800">
+        Title="OrderPage" Height="748" Width="1074">
     <Window.DataContext>
         <local:OrderViewModel />
     </Window.DataContext>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel>
+        <!-- Header -->
+        <TextBlock DockPanel.Dock="Top" Text="Order Management" FontSize="24" FontWeight="Bold" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-        <!-- Left Column - Orders List and OrderProduct List -->
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Footer -->
+        <TextBlock DockPanel.Dock="Bottom" Text="© 2024 ManagementApp" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-            <!-- Orders List -->
-            <ListBox ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Id}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- OrderProduct List -->
-            <!--<ListBox Grid.Row="1" ItemsSource="{Binding SelectedOrder.OrderProducts}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding ProductId}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>-->
+            <!-- Left Column - Orders List and OrderProduct List -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Orders List -->
+                <ListBox Grid.Row="0" ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Id}" FontSize="16"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- OrderProduct List -->
+                <!--<ListBox Grid.Row="1" ItemsSource="{Binding SelectedOrder.OrderProducts}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ProductId}" FontSize="16"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>-->
+            </Grid>
+
+            <!-- Right Column - Order Details -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
+                <TextBlock Text="Create Order:" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="OrderId:"/>
+                <TextBox Text="{Binding NewOrderId}" Margin="0,5,0,10" FontSize="16"/>
+                <TextBlock Text="Total Amount:"/>
+                <TextBox Text="{Binding NewOrderTotalAmount}" Margin="0,5,0,10" FontSize="16"/>
+                <TextBlock Text="Order Date:"/>
+                <DatePicker SelectedDate="{Binding NewOrderDate}" Margin="0,5,0,10"/>
+                <TextBlock Text="Status:"/>
+                <TextBox Text="{Binding NewOrderStatus}" Margin="0,5,0,10" FontSize="16"/>
+                <TextBlock Text="Table ID:"/>
+                <TextBox Text="{Binding NewOrderTableId}" Margin="0,5,0,10" FontSize="16"/>
+                <Button Content="Create Order" Command="{Binding CreateOrderCommand}" Margin="0,10,0,0" Background="LightBlue" Width="150" Height="50" FontSize="16"/>
+                <Button Content="Generate Ticket" Command="{Binding GenerateTicketCommand}" Margin="0,10,0,0" Background="LightBlue" Width="150" Height="50" FontSize="16"/>
+                <TextBlock Text="Add Product to Order:" FontSize="18" FontWeight="Bold"/>
+                <ComboBox ItemsSource="{Binding AvailableProducts}" SelectedItem="{Binding SelectedProduct}" DisplayMemberPath="Name"/>
+                <TextBlock Text="Quantity:"/>
+                <TextBox Text="{Binding SelectedProductQuantity}" Margin="0,5,0,10" FontSize="16"/>
+                <TextBlock Text="TotalPrice:"/>
+                <TextBlock Text="{Binding IntermediateTotal}" FontSize="16"/>
+                <Button Content="Add Product to Order" Command="{Binding AddProductToOrderCommand}" Background="LightGreen" Width="96" Height="36" FontSize="16"/>
+                <Button Content="Delete Order" Command="{Binding DeleteOrderCommand}" Background="LightCoral" Width="96" Height="36" FontSize="16"/>
+            </StackPanel>
         </Grid>
-
-        <!-- Right Column - Order Details -->
-        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
-            <TextBlock Text="Create Order:"/>
-            <TextBlock Text="OrderId:"/>
-            <TextBox Text="{Binding NewOrderId}" Margin="0,5,0,10"/>
-            <TextBlock Text="Total Amount:"/>
-            <TextBox Text="{Binding NewOrderTotalAmount}" Margin="0,5,0,10"/>
-            <TextBlock Text="Order Date:"/>
-            <DatePicker SelectedDate="{Binding NewOrderDate}" Margin="0,5,0,10"/>
-            <TextBlock Text="Status:"/>
-            <TextBox Text="{Binding NewOrderStatus}" Margin="0,5,0,10"/>
-            <TextBlock Text="Table ID:"/>
-            <TextBox Text="{Binding NewOrderTableId}" Margin="0,5,0,10"/>
-            <Button Content="Create Order" Command="{Binding CreateOrderCommand}" Margin="0,10,0,0"/>
-
-            <TextBlock Text="Add Product to Order:"/>
-            <ComboBox ItemsSource="{Binding AvailableProducts}" SelectedItem="{Binding SelectedProduct}" DisplayMemberPath="Name"/>
-            <TextBlock Text="Quantity:"/>
-            <TextBox Text="{Binding SelectedProductQuantity}" Margin="0,5,0,10"/>
-            <TextBlock Text="TotalPrice:"/>
-            <TextBlock Text="{Binding IntermediateTotal}" />
-            <Button Content="Add Product to Order" Command="{Binding AddProductToOrderCommand}" Margin="0,10,0,0"/>
-
-            <Button Content="Delete Order" Command="{Binding DeleteOrderCommand}" Margin="0,20,0,0"/>
-        </StackPanel>
-    </Grid>
+    </DockPanel>
 </Window>

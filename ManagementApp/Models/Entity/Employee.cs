@@ -58,7 +58,7 @@ namespace ManagementApp.Models.Entity
         }
         public Employee()
         {
-            // Default constructor with no parameters
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

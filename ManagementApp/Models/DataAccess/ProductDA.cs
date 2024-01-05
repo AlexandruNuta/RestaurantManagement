@@ -7,10 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.DataAccess
 {
-    public  class ProductDA
+    public class ProductDAFactory : IProductDAFactory
+    {
+        public IProductDA Create()
+        {
+            return new ProductDA();
+        }
+    }
+    public interface IProductDA
+    {
+        List<Product> GetProducts();
+        Product GetProductByName(string name);
+        bool UpdateProductByName(string name, decimal price);
+        bool CreateProduct(int id, string name, decimal price);
+        bool DeleteProduct(int id);
+    }
+    public  class ProductDA:IProductDA
     {
         public Product GetProductByName(string productName)
         {
@@ -33,13 +49,13 @@ namespace ManagementApp.Models.DataAccess
                         Id = Convert.ToInt32(reader["ProductId"]),
                         Name = reader["ProductName"].ToString(),
                         Price = Convert.ToDecimal(reader["Price"])
-                        // Add other properties as needed
                     };
                     return foundProduct;
+
                 }
                 else
                 {
-                    return null; // Product not found
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -75,8 +91,8 @@ namespace ManagementApp.Models.DataAccess
                         Id = Convert.ToInt32(reader["ProductId"]),
                         Name = reader["Name"].ToString(),
                         Price = Convert.ToDecimal(reader["Price"])
-                        // Add other properties as needed
                     };
+
                     products.Add(product);
                 }
 
@@ -154,7 +170,6 @@ namespace ManagementApp.Models.DataAccess
                 cmd.Parameters.Add("@id", SqlDbType.NVarChar).Value = id;
                 cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = name;
                 cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
-                // Add other parameters as needed
 
                 int rowsAffected = cmd.ExecuteNonQuery();
                 return rowsAffected > 0;

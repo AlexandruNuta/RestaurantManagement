@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using ManagementApp.Services;
+using ManagementApp.Models.DataAccess;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.ViewModels
 {
@@ -31,10 +34,11 @@ namespace ManagementApp.ViewModels
             OnPropertyChanged(nameof(SelectedOrder));
         }
 
-        public OrderBLL _orderBLL = new OrderBLL();
-        public ProductBLL _productBLL = new ProductBLL();
+        public OrderBLL _orderBLL;
+        private PdfGenerator _pdfGenerator = new PdfGenerator();
+        private PaymentBLL _paymentBLL;
+        public ProductBLL _productBLL;
 
-        
 
         private decimal _newOrderTotalAmount;
         public decimal NewOrderTotalAmount
@@ -107,14 +111,24 @@ namespace ManagementApp.ViewModels
         public ICommand CreateOrderCommand { get; }
         public ICommand DeleteOrderCommand { get; }
 
+        public ICommand GenerateTicketCommand { get; }
+
         public OrderViewModel()
         {
+            IProductDAFactory productDAFactory = new ProductDAFactory();
+            _productBLL = new ProductBLL(productDAFactory);
+            IOrderDAFactory orderDA = new OrderDAFactory();
+            _orderBLL = new OrderBLL(orderDA);
+            IPaymentDAFactory paymentDA = new PaymentDAFactory();
+            _paymentBLL = new PaymentBLL(paymentDA);
             AddProductToOrderCommand = new RelayCommand(AddProductToOrder);
             CreateOrderCommand = new RelayCommand(CreateOrder);
             DeleteOrderCommand = new RelayCommand(DeleteOrder);
+            GenerateTicketCommand = new RelayCommand(GenerateTicket);
             LoadAvailableProducts();
             LoadOrders();
             _intermediateTotal = 0;
+           
         }
 
         private void CreateOrder()
@@ -127,14 +141,14 @@ namespace ManagementApp.ViewModels
             {
                 MessageBox.Show("Order created successfully");
                 Orders.Clear();
-                LoadOrders(); // Refresh the list of orders
+                LoadOrders();
+                
             }
             else
             {
                 MessageBox.Show("Error occurred while creating the order");
             }
 
-            // Clear the text boxes after adding
             NewOrderId = 0;
             NewOrderTotalAmount = 0;
             NewOrderDate = DateTime.Now;
@@ -158,7 +172,6 @@ namespace ManagementApp.ViewModels
             }
             IntermediateTotal += (SelectedProduct.Price * SelectedProductQuantity);
 
-            // Reset selected product and quantity (if needed)
             SelectedProduct = null;
             SelectedProductQuantity = 0;
         }
@@ -181,6 +194,26 @@ namespace ManagementApp.ViewModels
             else
             {
                 MessageBox.Show("Error occurred while deleting the order");
+            }
+        }
+
+        private void GenerateTicket()
+        {
+            if (SelectedOrder == null)
+            {
+                MessageBox.Show("Please select an order to generate a ticket for.");
+                return;
+            }
+            bool paymentSuccess = _paymentBLL.CreatePayment(SelectedOrder.Id, _intermediateTotal, DateTime.Now);
+
+            if (paymentSuccess)
+            {
+                _pdfGenerator.GenerateReceipt($"Customer", _intermediateTotal, SelectedOrder.OrderDate);
+                MessageBox.Show("Ticket generated successfully. Payment added to the order.");
+            }
+            else
+            {
+                MessageBox.Show("Error adding payment to the order.");
             }
         }
 

@@ -5,47 +5,66 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ManagementApp.ViewModels"
         mc:Ignorable="d"
-        Title="TableView" Height="450" Width="800">
+        Title="TableView" Height="470" Width="796">
+
     <Window.DataContext>
-        <local:TableViewModel />
+        <local:TableViewModel/>
     </Window.DataContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <!-- Header -->
+        <TextBlock DockPanel.Dock="Top" Text="Table Management" FontSize="24" FontWeight="Bold" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-        <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Number}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <!-- Footer -->
+        <TextBlock DockPanel.Dock="Bottom" Text="© 2024 ManagementApp" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Add" Command="{Binding AddTableCommand}" Margin="10"/>
-            <Button Content="Edit" Command="{Binding EditTableCommand}" Margin="10"/>
-            <Button Content="Delete" Command="{Binding DeleteTableCommand}" Margin="10"/>
-            <Button Content="Link" Command="{Binding LinkWaiterTableCommand}" Margin="10"/>
-        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
-            <TextBlock Text="Table ID:" />
-            <TextBox Text="{Binding TableId, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Number}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox ItemsSource="{Binding Tables}" SelectedItem="{Binding SelectedTable}" Grid.Column="2" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding WaiterId}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,115,0,10" Grid.RowSpan="2" Width="434">
+                <Button Content="Add" Command="{Binding AddTableCommand}" Margin="10" Background="LightBlue" Width="76" Height="50" FontSize="16"/>
+                <Button Content="Edit" Command="{Binding EditTableCommand}" Margin="10" Background="LightGreen" Width="74" Height="50" FontSize="16"/>
+                <Button Content="Delete" Command="{Binding DeleteTableCommand}" Margin="10" Background="LightCoral" Width="76" Height="50" FontSize="16"/>
+                <Button Content="Link" Command="{Binding LinkWaiterTableCommand}" Margin="10" Background="LightYellow" Width="76" Height="50" FontSize="16"/>
+            </StackPanel>
 
-            <TextBlock Text="Number:" />
-            <TextBox Text="{Binding Number, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="45,10,0,10" Grid.Column="1">
+                <TextBlock Text="Table ID:" />
+                <TextBox Text="{Binding TableId, Mode=TwoWay}" Margin="0,5,0,10"/>
 
-            <TextBlock Text="Available Seats:" />
-            <TextBox Text="{Binding AvailableSeats, Mode=TwoWay}" Margin="0,5,0,10"/>
+                <TextBlock Text="Number:" />
+                <TextBox Text="{Binding Number, Mode=TwoWay}" Margin="0,5,0,10"/>
 
-            <TextBlock Text="Occupied Seats:" />
-            <TextBox Text="{Binding OccupiedSeats, Mode=TwoWay}" Margin="0,5,0,10"/>
+                <TextBlock Text="Available Seats:" />
+                <TextBox Text="{Binding AvailableSeats, Mode=TwoWay}" Margin="0,5,0,10"/>
 
-            <TextBlock Text="Waiter ID:" />
-            <TextBox Text="{Binding WaiterId, Mode=TwoWay}" Margin="0,5,0,10"/>
-        </StackPanel>
-    </Grid>
+                <TextBlock Text="Occupied Seats:" />
+                <TextBox Text="{Binding OccupiedSeats, Mode=TwoWay}" Margin="0,5,0,10"/>
+
+                <TextBlock Text="Waiter ID:" />
+                <TextBox Text="{Binding WaiterId, Mode=TwoWay}" Margin="0,5,0,10"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

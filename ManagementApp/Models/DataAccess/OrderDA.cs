@@ -7,10 +7,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ManagementApp.Models.Entity;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.Models.DataAccess
 {
-    public class OrderDA
+    public class OrderDAFactory: IOrderDAFactory
+    {
+        public IOrderDA Create()
+        {
+            return new OrderDA();
+        }
+    }
+    public interface IOrderDA
+    {
+        bool CreateOrder(int id, decimal totalAmount, DateTime orderDate, string status, int tableId);
+        OrderWithProducts GetOrder(int id);
+        List<Order> GetAllOrders();
+        bool DeleteOrder(int orderid);
+        bool AddProductToOrder(int orderId, int productId, int quantity);
+        List<OrderProduct> GetProductsForOrder(int orderId);
+        decimal GetProductPrice(int productId);
+
+    }
+    public class OrderDA:IOrderDA
     {
         public bool CreateOrder(int id, decimal totalAmount, DateTime orderDate, string status, int tableId)
         {
@@ -29,7 +48,7 @@ namespace ManagementApp.Models.DataAccess
 
                 int rowsAffected = cmd.ExecuteNonQuery();
 
-                return rowsAffected > 0; // Returns true if at least one row was inserted
+                return rowsAffected > 0;
             }
             catch (Exception ex)
             {
@@ -71,7 +90,7 @@ namespace ManagementApp.Models.DataAccess
 
                     if (order != null)
                     {
-                        // Fetch associated products for the order from OrderProduct table
+
                         cmd = new SqlCommand("[dbo].[GetProductsForOrder]", connection);
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
@@ -146,14 +165,12 @@ namespace ManagementApp.Models.DataAccess
                     connection.Open();
                     transaction = connection.BeginTransaction();
 
-                    // Delete OrderProduct entries for the order
                     SqlCommand deleteOrderProductsCmd = new SqlCommand("[dbo].[DeleteOrderProductsByOrderId]", connection, transaction);
                     deleteOrderProductsCmd.CommandType = CommandType.StoredProcedure;
                     deleteOrderProductsCmd.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
 
                     int rowsAffected = deleteOrderProductsCmd.ExecuteNonQuery();
 
-                    // Delete the Order itself
                     SqlCommand deleteOrderCmd = new SqlCommand("[dbo].[DeleteOrder]", connection, transaction);
                     deleteOrderCmd.CommandType = CommandType.StoredProcedure;
                     deleteOrderCmd.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
@@ -253,7 +270,7 @@ namespace ManagementApp.Models.DataAccess
                 }
             }
 
-            return 0; // sau o altă valoare prestabilită
+            return 0;
         }
 
     }

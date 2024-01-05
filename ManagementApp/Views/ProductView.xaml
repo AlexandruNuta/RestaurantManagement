@@ -7,40 +7,53 @@
         mc:Ignorable="d"
         Title="ProductView" Height="450" Width="800">
     <Window.DataContext>
-        <local:ProductViewModel />
+        <local:ProductViewModel/>
     </Window.DataContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <!-- Header -->
+        <TextBlock DockPanel.Dock="Top" Text="Product Management" FontSize="24" FontWeight="Bold" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
 
-        <ListBox ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <!-- Footer -->
+        <TextBlock DockPanel.Dock="Bottom" Text="© 2024 ManagementApp" Background="LightBlue" Foreground="White" TextAlignment="Center" Padding="10"/>
+        
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Add" Command="{Binding AddProductCommand}" Margin="10"/>
-            <Button Content="Edit" Command="{Binding EditProductCommand}" Margin="10"/>
-            <Button Content="Delete" Command="{Binding DeleteProductCommand}" Margin="10"/>
-        </StackPanel>
+        <!-- Main Content -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
-            <TextBlock Text="Product ID:" />
-            <TextBox Text="{Binding ProductId, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <!-- Product List -->
+            <ListBox Grid.Row="0" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" FontSize="16"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-            <TextBlock Text="Name:" />
-            <TextBox Text="{Binding ProductName, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="80,147,0,0" Grid.RowSpan="2">
+                <Button Content="Add" Command="{Binding AddProductCommand}" Margin="10" Background="LightBlue" Width="100" Height="50" FontSize="16"/>
+                <Button Content="Edit" Command="{Binding EditProductCommand}" Margin="10" Background="LightGreen" Width="100" Height="50" FontSize="16"/>
+                <Button Content="Delete" Command="{Binding DeleteProductCommand}" Margin="10" Background="LightCoral" Width="100" Height="50" FontSize="16"/>
+            </StackPanel>
 
-            <TextBlock Text="Price:" />
-            <TextBox Text="{Binding Price, Mode=TwoWay}" Margin="0,5,0,10"/>
+            <!-- Product Details -->
+            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
+                <TextBlock Text="Product ID:" FontSize="16"/>
+                <TextBox Text="{Binding ProductId, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
 
-            <!-- Add other controls for additional properties if needed -->
-        </StackPanel>
-    </Grid>
+                <TextBlock Text="Name:" FontSize="16"/>
+                <TextBox Text="{Binding ProductName, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
+
+                <TextBlock Text="Price:" FontSize="16"/>
+                <TextBox Text="{Binding Price, Mode=TwoWay}" Margin="0,5,0,10" FontSize="16"/>
+
+                <!-- Add other controls for additional properties if needed -->
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

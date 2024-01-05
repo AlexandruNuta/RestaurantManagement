@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ManagementApp.Commands;
 using ManagementApp.Models.BusinessLogic;
+using ManagementApp.Models.DataAccess;
 using ManagementApp.Models.Entity;
 using ManagementApp.Views;
+using static ManagementApp.Models.Entity.FactoriInterfaces;
 
 namespace ManagementApp.ViewModels
 {
@@ -35,7 +37,9 @@ namespace ManagementApp.ViewModels
 
         private void Login()
         {
-            EmployeeBLL employeeBLL = new EmployeeBLL();
+            EmployeeBLL employeeBLL;
+            IEmployeeFactory employeeDA = new EmployeeDAFactory();
+            employeeBLL = new EmployeeBLL(employeeDA);
             Employee employee = employeeBLL.GetEmployeeByUsername(Username);
 
             if (employee != null)
@@ -43,11 +47,11 @@ namespace ManagementApp.ViewModels
                 // Successful login
                 if (employee.Position == "Administrator")
                 {
-                    NavigateToAdminPage(); // Navigate to the admin page
+                    NavigateToAdminPage();
                 }
                 else
                 {
-                    NavigateToEmployeePage(); // Navigate to the employee page
+                    NavigateToEmployeePage();
                 }
             }
             else
@@ -59,16 +63,12 @@ namespace ManagementApp.ViewModels
         {
             AdminPage adminPage = new AdminPage();
             adminPage.Show();
-            // Close the current login window if needed
-            // this.Close();
         }
 
         private void NavigateToEmployeePage()
         {
             EmployeePage employeePage = new EmployeePage();
             employeePage.Show();
-            // Close the current login window if needed
-            // this.Close();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
